@@ -1,0 +1,38 @@
+[build-system]
+requires = [
+    "setuptools>=36.2.1", # environment markers
+    "setuptools_scm",
+    "wheel",
+]
+
+[tool.setuptools_scm]
+write_to = "src/update_pip_constraints/version.py"
+
+[tool.black]
+exclude = '''
+/(
+    .*\.egg-info
+    | .*build
+    | \.eggs
+    | \.git
+    | \.pytest_cache
+    | \.tox
+    | \.venv
+    | \.vscode
+    | dist
+)/
+'''
+experimental-string-processing = true
+include = '\.pyi?$'
+line-length = 79
+target-version = [
+    'py36',
+    'py37',
+    'py38',
+    'py39',
+]
+
+[tool.isort]
+profile = "black"
+src_paths = ["src", "tests"]
+line_length = 79

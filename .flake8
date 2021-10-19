@@ -1,0 +1,49 @@
+[flake8]
+application-import-names =
+    update_pip_constraints
+filename =
+    ./docs/*.py
+    ./src/*.py
+    ./tests/*.py
+exclude =
+    **/__pycache__
+    **/_build
+    /typings/**
+ignore =
+    # https://github.com/psf/black#slices
+    E203
+    # allowed by black
+    E231
+    # https://github.com/psf/black#line-length
+    E501
+    # should be possible to use {} in latex strings
+    FS003
+    # missing pygments
+    RST201
+    # unexpected indentation (related to google style docstring)
+    RST299
+    # block quote ends without a blank line (black formatting)
+    RST301
+    # enforce type ignore with mypy error codes (combined --extend-select=TI100)
+    TI1
+    # https://github.com/psf/black#line-breaks--binary-operators
+    W503
+extend-select =
+    TI100
+radon-max-cc = 8
+radon-no-assert = True
+rst-roles =
+    attr,
+    class,
+    doc,
+    download,
+    file,
+    func,
+    meth,
+    mod,
+    ref,
+rst-directives =
+    deprecated,
+    envvar,
+    exception,
+    seealso,
