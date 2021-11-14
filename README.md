@@ -48,6 +48,8 @@ defined under an `extras_require` section called `[dev]`.
 
 ## Usage
 
+### Python package
+
 This Package can be installed with [`pip`](https://pypi.org/project/pip) from
 GitHub:
 
@@ -63,3 +65,140 @@ update-pip-constraints
 
 an updated constraint file will be created for your version of Python under
 `.constraints/py3.x.txt`.
+
+### GitHub Action
+
+Here are two examples of how to use `update-pip-constraints` as a
+[GitHub Action](https://github.com/features/actions):
+
+<details>
+<summary>
+Update constraints files during a PR by pushing if there are dependency changes
+</summary>
+
+```yaml
+name: Requirements (PR)
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  pip-constraints:
+    name: Update pip constraints files
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.7"
+          - "3.8"
+          - "3.9"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Check if there are dependency changes
+        run: git diff origin/main --exit-code -- .constraints setup.cfg
+        continue-on-error: true
+      - name: Update pip constraints files
+        if: success()
+        uses: ComPWA/update-pip-constraints@main
+        with:
+          python-version: ${{ matrix.python-version }}
+
+  push:
+    name: Push changes
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-20.04
+    needs:
+      - pip-constraints
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PAT }}
+      - uses: actions/download-artifact@v2
+      - run: rm -rf .constraints/
+      - run: mv artifact .constraints
+      - name: Commit and push changes
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }}
+          git config --global user.name "GitHub"
+          git config --global user.email "noreply@github.com"
+          git checkout -b ${GITHUB_HEAD_REF}
+          if [[ $(git status -s) ]]; then
+            git add -A
+            git commit -m "ci: upgrade pinned requirements (automatic)"
+            git config pull.rebase true
+            git pull origin ${GITHUB_HEAD_REF}
+            git push origin HEAD:${GITHUB_HEAD_REF}
+          fi
+```
+
+</details>
+
+<details>
+<summary>
+Create a PR with updated constraints files
+</summary>
+
+```yaml
+name: Requirements (scheduled)
+
+on:
+  schedule:
+    - cron: "0 2 * * 1"
+  workflow_dispatch:
+
+jobs:
+  pip-constraints:
+    name: Update pip constraint files
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.7"
+          - "3.8"
+          - "3.9"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ComPWA/update-pip-constraints@main
+        with:
+          python-version: ${{ matrix.python-version }}
+
+  push:
+    name: Create PR
+    runs-on: ubuntu-20.04
+    needs:
+      - pip-constraints
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PAT }}
+      - uses: actions/download-artifact@v2
+      - run: rm -rf .constraints/
+      - run: mv artifact .constraints
+      - uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: "ci: update pip constraints files"
+          committer: GitHub <noreply@github.com>
+          author: GitHub <noreply@github.com>
+          title: "ci: update pip constraints files"
+          branch-suffix: timestamp
+          delete-branch: true
+          token: ${{ secrets.PAT }}
+      - name: Print PR info
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+```
+
+</details>
+
+Note that you will have to set a
+[create a Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+(named `PAT` in the examples) in order to push the changes to the PR branch.
+The automatic
+[`GITHUB_TOKEN`](https://docs.github.com/en/actions/security-guides/automatic-token-authentication)
+can be used as well, but that **will not start the workflows**.

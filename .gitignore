@@ -51,6 +51,7 @@ pyvenv*/
 !.readthedocs.yml
 !.vscode/*.json
 !.zenodo.json
+!action.yml
 !codecov.yml
 !environment.yml
 !pyrightconfig.json
