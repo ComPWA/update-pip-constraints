@@ -10,13 +10,13 @@ runs:
   using: composite
   steps:
     - name: Set up Python ${{ inputs.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ inputs.python-version }}
     - run: pip install git+https://github.com/ComPWA/update-pip-constraints@main
       shell: bash
     - run: update-pip-constraints
       shell: bash
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         path: .constraints/py${{ inputs.python-version }}.txt
