@@ -61,6 +61,7 @@ include = [
 reportGeneralTypeIssues = false
 reportPrivateImportUsage = false
 reportUnboundVariable = false
+reportUnknownMemberType = false
 reportUnknownVariableType = false
 reportUnusedClass = true
 reportUnusedFunction = true
