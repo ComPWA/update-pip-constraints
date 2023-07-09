@@ -13,19 +13,22 @@ github:
 
 vscode:
   extensions:
-    - bungcip.better-toml
+    - charliermarsh.ruff
     - christian-kohler.path-intellisense
     - davidanson.vscode-markdownlint
     - eamodio.gitlens
     - editorconfig.editorconfig
     - esbenp.prettier-vscode
+    - garaioag.garaio-vscode-unwanted-recommendations
+    - github.vscode-github-actions
     - github.vscode-pull-request-github
+    - ms-python.mypy-type-checker
     - ms-python.python
     - ms-python.vscode-pylance
     - redhat.vscode-yaml
     - ryanluker.vscode-coverage-gutters
     - stkb.rewrap
     - streetsidesoftware.code-spell-checker
-    - travisillig.vscode-json-stable-stringify
+    - tamasfe.even-better-toml
     - tyriar.sort-lines
     - yzhang.markdown-all-in-one

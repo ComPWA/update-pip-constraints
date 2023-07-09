@@ -15,7 +15,8 @@ def main() -> None:
     python_version = _get_python_version()
     output_file = _form_constraint_file_path(python_version)
     if update_constraints_file(output_file):
-        raise RuntimeError("There were issues running pip-compile")
+        msg = "There were issues running pip-compile"
+        raise RuntimeError(msg)
 
 
 def _get_python_version() -> str:
@@ -38,9 +39,7 @@ def update_constraints_file(output_file: Path) -> int:
         "--strip-extras",
         f"-o {output_file}",
     ]
-    command_line = " ".join(command_arguments)
-    # pylint: disable=no-value-for-parameter
-    return compile.cli(command_line.split(" "))
+    return compile.cli(command_arguments)  # type: ignore[misc]
 
 
 if "__main__" in __name__:

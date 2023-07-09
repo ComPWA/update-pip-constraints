@@ -4,8 +4,8 @@ from pathlib import Path
 import pytest
 
 from update_pip_constraints import (
-    _form_constraint_file_path,
-    _get_python_version,
+    _form_constraint_file_path,  # pyright: ignore[reportPrivateUsage]
+    _get_python_version,  # pyright: ignore[reportPrivateUsage]
     update_constraints_file,
 )
 
