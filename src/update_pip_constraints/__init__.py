@@ -5,6 +5,8 @@ See `Constraints Files
 <https://github.com/jazzband/pip-tools>`_.
 """
 
+from setuptools import find_packages  # noqa: I001  # import setuptools first!
+
 import os
 import sys
 from configparser import ConfigParser
@@ -13,7 +15,6 @@ from typing import List, Optional
 
 import tomli
 from piptools.scripts import compile  # type: ignore[import]
-from setuptools import find_packages
 
 
 def main() -> None:
