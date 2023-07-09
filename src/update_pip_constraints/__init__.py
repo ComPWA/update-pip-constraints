@@ -33,11 +33,13 @@ def update_constraints_file(output_file: Path) -> int:
     output_file.parent.mkdir(exist_ok=True)
     command_arguments = [
         "setup.py",
-        "--extra dev",
+        "--extra",
+        "dev",
         "--no-annotate",
         "--upgrade",
         "--strip-extras",
-        f"-o {output_file}",
+        "-o",
+        output_file,
     ]
     return compile.cli(command_arguments)  # type: ignore[misc]
 
