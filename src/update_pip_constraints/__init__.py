@@ -19,10 +19,12 @@ from setuptools import find_packages
 def main() -> None:
     python_version = _get_python_version()
     output_file = _form_constraint_file_path(python_version)
-    packages = _get_packages()
-    packages.insert(0, "setuptools")
-    packages.insert(0, "pip")
-    if update_constraints_file(output_file, packages):
+    unsafe_packages = None
+    if not os.path.exists("setup.cfg"):
+        unsafe_packages = _get_packages()
+        unsafe_packages.insert(0, "setuptools")
+        unsafe_packages.insert(0, "pip")
+    if update_constraints_file(output_file, unsafe_packages):
         msg = "There were issues running pip-compile"
         raise RuntimeError(msg)
 
