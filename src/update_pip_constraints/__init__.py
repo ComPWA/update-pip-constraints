@@ -21,6 +21,11 @@ from typing import List, Optional
 import tomli
 from piptools.scripts import compile  # type: ignore[import]
 
+if sys.version_info < (3, 8):
+    from importlib_metadata import version
+else:
+    from importlib.metadata import version
+
 
 def main() -> None:
     python_version = _get_python_version()
@@ -74,15 +79,16 @@ def update_constraints_file(
 ) -> int:
     output_file.parent.mkdir(exist_ok=True)
     command_arguments = [
+        "-o",
+        output_file,
         "--extra",
         "dev",
         "--no-annotate",
-        "--resolver=backtracking",
         "--strip-extras",
         "--upgrade",
-        "-o",
-        output_file,
     ]
+    if version("pip-tools") >= "6.8.0":
+        command_arguments.append("--resolver=backtracking")
     if unsafe_packages is not None:
         for package in unsafe_packages:
             command_arguments.append("--unsafe-package")

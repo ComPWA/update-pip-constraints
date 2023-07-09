@@ -36,6 +36,7 @@
   "mypy-type-checker.args": ["--config-file", "pyproject.toml"],
   "mypy-type-checker.importStrategy": "fromEnvironment",
   "python.analysis.inlayHints.pytestParameters": true,
+  "python.analysis.typeCheckingMode": "strict",
   "python.formatting.provider": "black",
   "python.linting.banditEnabled": false,
   "python.linting.enabled": true,
