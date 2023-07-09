@@ -78,9 +78,11 @@ addopts = """
 filterwarnings = [
     "error",
     "ignore:Creating a LegacyVersion has been deprecated.*:DeprecationWarning",
+    "ignore:Distutils was imported before Setuptools.*:UserWarning",
     "ignore:The distutils package is deprecated.*:DeprecationWarning",
     "ignore:The distutils.sysconfig module is deprecated.*:DeprecationWarning",
     "ignore:pkg_resources is deprecated as an API:DeprecationWarning",
+    "ignore:the imp module is deprecated in favour of importlib.*:DeprecationWarning",
     'ignore:Setuptools is replacing distutils\.:UserWarning',
 ]
 markers = ["slow: marks tests as slow (deselect with '-m \"not slow\"')"]
