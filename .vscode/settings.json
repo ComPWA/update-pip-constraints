@@ -35,6 +35,7 @@
   "github-actions.workflows.pinned.workflows": [".github/workflows/ci.yml"],
   "githubPullRequests.telemetry.enabled": false,
   "gitlens.advanced.telemetry.enabled": false,
+  "mypy-type-checker.args": ["--config-file", "pyproject.toml"],
   "mypy-type-checker.importStrategy": "fromEnvironment",
   "python.analysis.inlayHints.pytestParameters": true,
   "python.formatting.provider": "black",
