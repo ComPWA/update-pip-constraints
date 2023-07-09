@@ -36,6 +36,7 @@ repos:
       - id: check-dev-files
         args:
           - --no-pypi
+          - --pytest-single-threaded
           - --repo-name=update-pip-constraints
       - id: format-setup-cfg
 
