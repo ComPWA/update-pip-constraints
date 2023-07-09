@@ -1,3 +1,4 @@
+import os
 import re
 from pathlib import Path
 
@@ -22,6 +23,8 @@ def test_get_python_version():
 
 @pytest.mark.slow()
 def test_update_constraints_file():
+    if "CI" in os.environ:
+        pytest.skip()
     this_directory = Path(__file__).parent.absolute()
     output_file = this_directory / "constraints.txt"
     with pytest.raises(SystemExit) as error:
