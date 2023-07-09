@@ -5,7 +5,12 @@ See `Constraints Files
 <https://github.com/jazzband/pip-tools>`_.
 """
 
+# fmt: off
+import warnings  # noqa: I001
+warnings.filterwarnings("ignore", category=UserWarning)
+
 from setuptools import find_packages  # noqa: I001  # import setuptools first!
+# fmt: on
 
 import os
 import sys
@@ -72,8 +77,9 @@ def update_constraints_file(
         "--extra",
         "dev",
         "--no-annotate",
-        "--upgrade",
+        "--resolver=backtracking",
         "--strip-extras",
+        "--upgrade",
         "-o",
         output_file,
     ]
