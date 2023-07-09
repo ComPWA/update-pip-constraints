@@ -32,10 +32,9 @@ def test_update_constraints_file():
         content = stream.read()
     expected_packages = [
         "black",
-        "flake8",
         "pip-tools",
-        "pylint",
         "pytest",
+        "ruff",
         "tox",
     ]
     for package in expected_packages:
