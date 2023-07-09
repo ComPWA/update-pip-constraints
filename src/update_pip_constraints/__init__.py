@@ -32,7 +32,6 @@ def _form_constraint_file_path(python_version: str) -> Path:
 def update_constraints_file(output_file: Path) -> int:
     output_file.parent.mkdir(exist_ok=True)
     command_arguments = [
-        "setup.py",
         "--extra",
         "dev",
         "--no-annotate",
