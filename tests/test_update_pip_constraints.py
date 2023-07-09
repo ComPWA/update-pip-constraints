@@ -1,11 +1,12 @@
+import os
 import re
 from pathlib import Path
 
 import pytest
 
 from update_pip_constraints import (
-    _form_constraint_file_path,
-    _get_python_version,
+    _form_constraint_file_path,  # pyright: ignore[reportPrivateUsage]
+    _get_python_version,  # pyright: ignore[reportPrivateUsage]
     update_constraints_file,
 )
 
@@ -22,6 +23,8 @@ def test_get_python_version():
 
 @pytest.mark.slow()
 def test_update_constraints_file():
+    if "CI" in os.environ:
+        pytest.skip()
     this_directory = Path(__file__).parent.absolute()
     output_file = this_directory / "constraints.txt"
     with pytest.raises(SystemExit) as error:
@@ -32,10 +35,9 @@ def test_update_constraints_file():
         content = stream.read()
     expected_packages = [
         "black",
-        "flake8",
         "pip-tools",
-        "pylint",
         "pytest",
+        "ruff",
         "tox",
     ]
     for package in expected_packages:

@@ -1,12 +1,12 @@
 # Python Container Action Template
 
 [![BSD 3-Clause license](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Spelling checked](https://img.shields.io/badge/cspell-checked-brightgreen.svg)](https://github.com/streetsidesoftware/cspell/tree/master/packages/cspell)
-[![GitPod](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ComPWA/update-pip-constraints)
+[![GitPod](https://img.shields.io/badge/gitpod-open-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ComPWA/update-pip-constraints)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ComPWA/update-pip-constraints/main.svg)](https://results.pre-commit.ci/latest/github/ComPWA/update-pip-constraints/main)
+[![Spelling checked](https://img.shields.io/badge/cspell-checked-brightgreen.svg)](https://github.com/streetsidesoftware/cspell/tree/master/packages/cspell)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![code style: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 This Python package is a wrapper around
 [`pip-tools`](https://github.com/jazzband/pip-tools). It helps updating a
@@ -71,6 +71,7 @@ an updated constraint file will be created for your version of Python under
 Here are two examples of how to use `update-pip-constraints` as a
 [GitHub Action](https://github.com/features/actions):
 
+<!-- markdownlint-disable MD033 MD013 -->
 <details>
 <summary>
 Update constraints files during a PR by pushing if there are dependency changes
