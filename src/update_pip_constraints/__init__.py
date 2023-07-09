@@ -22,7 +22,7 @@ def main() -> None:
     output_file = _form_constraint_file_path(python_version)
     unsafe_packages = None
     if not os.path.exists("setup.cfg"):
-        unsafe_packages = _get_packages()
+        unsafe_packages = _get_main_packages()
         unsafe_packages.insert(0, "setuptools")
         unsafe_packages.insert(0, "pip")
     if update_constraints_file(output_file, unsafe_packages):
@@ -35,10 +35,11 @@ def _get_python_version() -> str:
     return f"{version.major}.{version.minor}"
 
 
-def _get_packages() -> List[str]:
+def _get_main_packages() -> List[str]:
     where = __get_package_directory()
     packages = find_packages(where)
-    return [p.replace("_", "-") for p in packages]
+    packages = [p.replace("_", "-") for p in packages]
+    return [p for p in packages if "." not in p]
 
 
 def __get_package_directory() -> str:
