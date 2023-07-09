@@ -18,7 +18,7 @@ from configparser import ConfigParser
 from pathlib import Path
 from typing import List, Optional
 
-import tomli
+import toml
 from piptools.scripts import compile  # type: ignore[import]
 
 if sys.version_info < (3, 8):
@@ -60,7 +60,7 @@ def __get_package_directory() -> str:
             return cfg.get("options", "package_dir").strip().strip("=")
     if os.path.exists("pyproject.toml"):
         with open("pyproject.toml", "rb") as f:
-            pyproject = tomli.load(f)
+            pyproject = toml.load(f)  #  type: ignore[arg-type]
         setuptools_config = pyproject.get("tool", {}).get("setuptools", {})
         package_dir = setuptools_config.get("package-dir", {})
         where = package_dir.get("")
@@ -87,7 +87,8 @@ def update_constraints_file(
         "--strip-extras",
         "--upgrade",
     ]
-    if version("pip-tools") >= "6.8.0":
+    major, minor, *_ = (int(i) for i in version("pip-tools").split("."))
+    if (major, minor) >= (6, 8):
         command_arguments.append("--resolver=backtracking")
     if unsafe_packages is not None:
         for package in unsafe_packages:
