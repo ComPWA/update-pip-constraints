@@ -75,7 +75,6 @@ addopts = """
 --durations=3"""
 filterwarnings = [
     "error",
-    "ignore::ResourceWarning",
     "ignore:Creating a LegacyVersion has been deprecated.*:DeprecationWarning",
     "ignore:The distutils package is deprecated.*:DeprecationWarning",
     "ignore:The distutils.sysconfig module is deprecated.*:DeprecationWarning",
