@@ -59,7 +59,7 @@ def __get_package_directory() -> str:
         if cfg.has_option("options", "package_dir"):
             return cfg.get("options", "package_dir").strip().strip("=")
     if os.path.exists("pyproject.toml"):
-        with open("pyproject.toml", "rb") as f:
+        with open("pyproject.toml") as f:
             pyproject = toml.load(f)  #  type: ignore[arg-type]
         setuptools_config = pyproject.get("tool", {}).get("setuptools", {})
         package_dir = setuptools_config.get("package-dir", {})
