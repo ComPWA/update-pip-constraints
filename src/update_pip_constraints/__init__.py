@@ -48,8 +48,25 @@ def _get_python_version() -> str:
 def _get_main_packages() -> List[str]:
     where = __get_package_directory()
     packages = find_packages(where)
+    package_name = __get_package_name()
+    if package_name is not None:
+        packages.insert(0, package_name)
     packages = [p.replace("_", "-") for p in packages]
-    return [p for p in packages if "." not in p]
+    packages = [p for p in packages if "." not in p]
+    return sorted(set(packages))
+
+
+def __get_package_name() -> Optional[str]:
+    if os.path.exists("setup.cfg"):
+        cfg = ConfigParser()
+        cfg.read("setup.cfg")
+        if cfg.has_option("metadata", "name"):
+            return cfg.get("metadata", "name").strip().strip("=")
+    if os.path.exists("pyproject.toml"):
+        with open("pyproject.toml") as f:
+            pyproject = toml.load(f)  #  type: ignore[arg-type]
+        return pyproject.get("project", {}).get("name", None)
+    return None
 
 
 def __get_package_directory() -> str:
