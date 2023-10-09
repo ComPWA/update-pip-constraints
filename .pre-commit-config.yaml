@@ -36,6 +36,7 @@ repos:
       - id: check-dev-files
         args:
           - --no-notebooks
+          - --no-prettierrc
           - --no-pypi
           - --pytest-single-threaded
           - --repo-name=update-pip-constraints
