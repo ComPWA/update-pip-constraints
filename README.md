@@ -71,7 +71,6 @@ an updated constraint file will be created for your version of Python under
 Here are two examples of how to use `update-pip-constraints` as a
 [GitHub Action](https://github.com/features/actions):
 
-<!-- markdownlint-disable MD033 MD013 -->
 <details>
 <summary>
 Update constraints files during a PR by pushing if there are dependency changes
