@@ -17,6 +17,6 @@ runs:
       shell: bash
     - run: update-pip-constraints
       shell: bash
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         path: .constraints/py${{ inputs.python-version }}.txt
