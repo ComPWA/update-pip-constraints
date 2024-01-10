@@ -34,7 +34,12 @@
     "redeboer",
     "venv"
   ],
-  "enableFiletypes": ["git-commit", "julia", "jupyter"],
+  "enableFiletypes": [
+    "git-commit",
+    "github-actions-workflow",
+    "julia",
+    "jupyter"
+  ],
   "flagWords": [
     "analyse",
     "colour",

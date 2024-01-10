@@ -3,6 +3,7 @@ ci:
   autoupdate_schedule: monthly
   skip:
     - mypy
+    - prettier
     - pyright
     - taplo
 
@@ -11,6 +12,18 @@ repos:
     hooks:
       - id: check-hooks-apply
       - id: check-useless-excludes
+
+  - repo: https://github.com/ComPWA/repo-maintenance
+    rev: 0.1.13a2
+    hooks:
+      - id: check-dev-files
+        args:
+          - --no-notebooks
+          - --no-prettierrc
+          - --no-pypi
+          - --pytest-single-threaded
+          - --repo-name=update-pip-constraints
+      - id: format-setup-cfg
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
@@ -30,19 +43,7 @@ repos:
         args: ["--django"]
       - id: trailing-whitespace
 
-  - repo: https://github.com/ComPWA/repo-maintenance
-    rev: 0.1.13a2
-    hooks:
-      - id: check-dev-files
-        args:
-          - --no-notebooks
-          - --no-prettierrc
-          - --no-pypi
-          - --pytest-single-threaded
-          - --repo-name=update-pip-constraints
-      - id: format-setup-cfg
-
-  - repo: https://github.com/psf/black
+  - repo: https://github.com/psf/black-pre-commit-mirror
     rev: 23.12.1
     hooks:
       - id: black
@@ -94,13 +95,6 @@ repos:
     rev: v1.1.345
     hooks:
       - id: pyright
-
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
-    hooks:
-      - id: pyupgrade
-        args:
-          - --py36-plus
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.11
