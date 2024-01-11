@@ -75,7 +75,8 @@ addopts = """
 --color=yes
 --doctest-continue-on-failure
 --doctest-modules
---durations=3"""
+--durations=3
+"""
 filterwarnings = [
     "error",
     "ignore:Creating a LegacyVersion has been deprecated.*:DeprecationWarning",
