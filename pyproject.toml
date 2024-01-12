@@ -71,12 +71,12 @@ reportUnusedVariable = true
 typeCheckingMode = "strict"
 
 [tool.pytest.ini_options]
-addopts = """
---color=yes
---doctest-continue-on-failure
---doctest-modules
---durations=3
-"""
+addopts = [
+    "--color=yes",
+    "--doctest-continue-on-failure",
+    "--doctest-modules",
+    "--durations=3",
+]
 filterwarnings = [
     "error",
     "ignore:Creating a LegacyVersion has been deprecated.*:DeprecationWarning",
