@@ -10,7 +10,24 @@ jobs:
   milestone:
     if: startsWith(github.ref, 'refs/tags')
     uses: ComPWA/actions/.github/workflows/close-milestone.yml@v1
-  push:
+  push-to-version-branches:
+    name: Push to version branches
     if: startsWith(github.ref, 'refs/tags') && !github.event.release.prerelease
-    secrets: inherit
-    uses: ComPWA/actions/.github/workflows/push-to-version-branches.yml@v1
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure Git credentials
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Push to matching minor version branch
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          re='^(v?)([0-9]+)\.([0-9]+)\.[0-9]+'
+          if [[ $TAG =~ $re ]]; then
+            MAJOR_VERSION="${BASH_REMATCH[2]}"
+            MINOR_VERSION="${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
+            git push origin HEAD:refs/heads/v$MAJOR_VERSION --force
+            git push origin HEAD:refs/heads/v$MINOR_VERSION --force
+          fi
