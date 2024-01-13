@@ -21,6 +21,7 @@ repos:
           - --no-notebooks
           - --no-prettierrc
           - --no-pypi
+          - --no-version-branches
           - --pytest-single-threaded
           - --repo-name=update-pip-constraints
       - id: format-setup-cfg
