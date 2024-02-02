@@ -86,7 +86,7 @@ on:
 jobs:
   pip-constraints:
     name: Update pip constraints files
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -95,7 +95,7 @@ jobs:
           - "3.8"
           - "3.9"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Check if there are dependency changes
@@ -110,11 +110,11 @@ jobs:
   push:
     name: Push changes
     if: github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - pip-constraints
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT }}
       - uses: actions/download-artifact@v2
@@ -153,7 +153,7 @@ on:
 jobs:
   pip-constraints:
     name: Update pip constraint files
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -162,24 +162,24 @@ jobs:
           - "3.8"
           - "3.9"
     steps:
-      - uses: actions/checkout@v2
-      - uses: ComPWA/update-pip-constraints@main
+      - uses: actions/checkout@v4
+      - uses: ComPWA/update-pip-constraints@v1
         with:
           python-version: ${{ matrix.python-version }}
 
   push:
     name: Create PR
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - pip-constraints
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT }}
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
       - run: rm -rf .constraints/
       - run: mv artifact .constraints
-      - uses: peter-evans/create-pull-request@v3
+      - uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "ci: update pip constraints files"
           committer: GitHub <noreply@github.com>
