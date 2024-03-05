@@ -16,33 +16,42 @@ import os
 import sys
 from configparser import ConfigParser
 from pathlib import Path
-from typing import List, Optional
-
+from typing import List, Optional, Sequence
+from argparse import ArgumentParser
 import toml
-from piptools.scripts import compile  # type: ignore[import]
-
-if sys.version_info < (3, 8):
-    from importlib_metadata import version
-else:
-    from importlib.metadata import version
 
 
-def main() -> None:
-    python_version = _get_python_version()
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    parser = ArgumentParser(description="Update pip constraints file")
+    parser.add_argument(
+        "--python-version",
+        default=_get_python_version(),
+        help="Python version to use",
+        type=str,
+    )
+    args = parser.parse_args(argv)
+    python_version = args.python_version
     output_file = _form_constraint_file_path(python_version)
-    unsafe_packages = None
-    if not os.path.exists("setup.cfg"):
-        unsafe_packages = _get_main_packages()
-        unsafe_packages.insert(0, "setuptools")
-        unsafe_packages.insert(0, "pip")
-    if update_constraints_file(output_file, unsafe_packages):
+    excludes: List[str] = []
+    if sys.version_info < (3, 7) or not __uses_pyproject():
+        excludes = [
+            "pip",
+            "setuptools",
+            *_get_main_packages(),
+        ]
+        exit_code = update_constraints_file_py36(output_file, excludes)
+    else:
+        excludes = ["setuptools"]
+        exit_code = update_constraints_file(output_file, python_version, excludes)
+    if exit_code != 0:
         msg = "There were issues running pip-compile"
         raise RuntimeError(msg)
+    return exit_code
 
 
 def _get_python_version() -> str:
-    version = sys.version_info
-    return f"{version.major}.{version.minor}"
+    v = sys.version_info
+    return f"{v.major}.{v.minor}"
 
 
 def _get_main_packages() -> List[str]:
@@ -86,14 +95,52 @@ def __get_package_directory() -> str:
     return "."
 
 
+def __uses_pyproject() -> bool:
+    with open("pyproject.toml") as f:
+        pyproject = toml.load(f)  #  type: ignore[arg-type]
+    return pyproject.get("project", {}).get("name", None) is not None
+
+
 def _form_constraint_file_path(python_version: str) -> Path:
     constraints_dir = Path(".constraints")
     return constraints_dir / f"py{python_version}.txt"
 
 
 def update_constraints_file(
-    output_file: Path, unsafe_packages: Optional[List[str]] = None
+    output_file: Path, python_version: str, unsafe_packages: List[str]
 ) -> int:
+    import subprocess  # noqa: PLC0415, S404
+
+    if not __uses_pyproject():
+        msg = "Package has to be configured with pyproject.toml"
+        raise ValueError(msg)
+    output_file.parent.mkdir(exist_ok=True)
+    command_arguments = [
+        "uv",
+        "pip",
+        "compile",
+        "pyproject.toml",
+        "-o",
+        str(output_file),
+        "--all-extras",
+        "--no-annotate",
+        f"--python-version={python_version}",
+        "--upgrade",
+    ]
+    for package in unsafe_packages:
+        command_arguments.append("--no-emit-package")
+        command_arguments.append(package)
+    return subprocess.check_call(command_arguments)  # noqa: S603
+
+
+def update_constraints_file_py36(output_file: Path, unsafe_packages: List[str]) -> int:
+    from piptools.scripts import compile  # type: ignore[import]  # noqa: PLC0415
+
+    if sys.version_info < (3, 8):
+        from importlib_metadata import version  # noqa: PLC0415
+    else:
+        from importlib.metadata import version  # noqa: PLC0415
+
     output_file.parent.mkdir(exist_ok=True)
     command_arguments = [
         "-o",
@@ -107,12 +154,11 @@ def update_constraints_file(
     major, minor, *_ = (int(i) for i in version("pip-tools").split("."))
     if (major, minor) >= (6, 8):
         command_arguments.append("--resolver=backtracking")
-    if unsafe_packages is not None:
-        for package in unsafe_packages:
-            command_arguments.append("--unsafe-package")
-            command_arguments.append(package)
+    for package in unsafe_packages:
+        command_arguments.append("--unsafe-package")
+        command_arguments.append(package)
     return compile.cli(command_arguments)  # type: ignore[misc]
 
 
-if "__main__" in __name__:
-    main()
+if __name__ == "__main__":
+    raise SystemExit(main())

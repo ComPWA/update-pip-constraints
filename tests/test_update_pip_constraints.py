@@ -7,7 +7,7 @@ import pytest
 from update_pip_constraints import (
     _form_constraint_file_path,  # pyright: ignore[reportPrivateUsage]
     _get_python_version,  # pyright: ignore[reportPrivateUsage]
-    update_constraints_file,
+    update_constraints_file_py36,
 )
 
 
@@ -22,13 +22,13 @@ def test_get_python_version():
 
 
 @pytest.mark.slow()
-def test_update_constraints_file():
+def test_update_constraints_file_py36():
     if "CI" in os.environ:
         pytest.skip()
     this_directory = Path(__file__).parent.absolute()
     output_file = this_directory / "constraints.txt"
     with pytest.raises(SystemExit) as error:
-        update_constraints_file(output_file)
+        update_constraints_file_py36(output_file, unsafe_packages=[])
     assert error.type is SystemExit
     assert error.value.code == 0
     with open(output_file) as stream:
