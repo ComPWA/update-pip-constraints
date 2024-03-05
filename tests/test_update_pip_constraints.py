@@ -34,7 +34,6 @@ def test_update_constraints_file():
     with open(output_file) as stream:
         content = stream.read()
     expected_packages = [
-        "black",
         "pip-tools",
         "pytest",
         "ruff",
