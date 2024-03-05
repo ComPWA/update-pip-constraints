@@ -8,32 +8,6 @@ requires = [
 [tool.setuptools_scm]
 write_to = "src/update_pip_constraints/version.py"
 
-[tool.black]
-exclude = '''
-/(
-    .*\.egg-info
-    | .*build
-    | \.eggs
-    | \.git
-    | \.pytest_cache
-    | \.tox
-    | \.venv
-    | \.vscode
-    | dist
-)/
-'''
-include = '\.pyi?$'
-preview = true
-target-version = [
-    "py310",
-    "py311",
-    "py312",
-    "py36",
-    "py37",
-    "py38",
-    "py39",
-]
-
 [tool.coverage.run]
 branch = true
 source = ["src"]
@@ -94,6 +68,19 @@ testpaths = [
 ]
 
 [tool.ruff]
+preview = true
+show-fixes = true
+src = [
+    "src",
+    "tests",
+]
+target-version = "py37"
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+
+[tool.ruff.lint]
 extend-select = [
     "A",
     "B",
@@ -136,31 +123,32 @@ ignore = [
     "D407",
     "D416",
     "E501",
+    "ISC001",
+    "PLW1514",
     "SIM108",
     "UP036",
 ]
-show-fixes = true
-src = [
-    "src",
-    "tests",
-]
-target-version = "py37"
 task-tags = ["cspell"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+
+[tool.ruff.lint.per-file-ignores]
 "setup.py" = ["D100"]
 "src/update_pip_constraints/__init__.py" = ["E402"]
 "tests/*" = [
     "D",
     "INP001",
     "PGH001",
+    "PLC2701",
     "PLR0913",
     "PLR2004",
+    "PLR6301",
     "S101",
     "T20",
 ]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.tomlsort]
