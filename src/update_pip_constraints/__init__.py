@@ -34,7 +34,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     python_version = args.python_version
     output_file = _form_constraint_file_path(python_version)
     excludes: List[str] = []
-    if sys.version_info < (3, 7) or not __uses_pyproject():
+    if sys.version_info < (3, 8) or not __uses_pyproject():
         excludes = [
             "pip",
             "setuptools",
