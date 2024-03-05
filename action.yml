@@ -13,8 +13,30 @@ runs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
-    - run: pip install git+https://github.com/ComPWA/update-pip-constraints@main
+
+    - name: Determine package configuration file
+      run: |
+        if [ -f pyproject.toml ]; then
+          if grep -q "\[project\]" pyproject.toml; then
+            echo 'SETUP_FILE=pyproject.toml' | tee -a $GITHUB_ENV
+          fi
+        elif [ -f setup.cfg ]; then
+          if grep -q "\[metadata\]" setup.cfg && grep -q "\[options\]" setup.cfg; then
+            echo 'SETUP_FILE=setup.cfg' | tee -a $GITHUB_ENV
+          fi
+        fi
       shell: bash
+
+    - if: env.SETUP_FILE == 'setup.cfg'
+      run: |
+        pip install update-pip-constraints@git+https://github.com/ComPWA/update-pip-constraints@v1
+      shell: bash
+    - if: env.SETUP_FILE == 'pyproject.toml'
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        uv pip install --system update-pip-constraints@git+https://github.com/ComPWA/update-pip-constraints@v1
+      shell: bash
+
     - run: update-pip-constraints
       shell: bash
     - uses: actions/upload-artifact@v4

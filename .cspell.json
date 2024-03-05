@@ -31,7 +31,9 @@
     "codecov",
     "commitlint",
     "compwa",
+    "elif",
     "prereleased",
+    "pyproject",
     "redeboer",
     "venv"
   ],
