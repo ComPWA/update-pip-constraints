@@ -142,6 +142,7 @@ def update_constraints_file_py36(output_file: Path, unsafe_packages: List[str]) 
     else:
         from importlib.metadata import version  # noqa: PLC0415
 
+    print("Resolving dependencies with pip-tools...")  # noqa: T201
     output_file.parent.mkdir(exist_ok=True)
     command_arguments = [
         "-o",
