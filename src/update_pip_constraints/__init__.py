@@ -24,9 +24,10 @@ import toml
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = ArgumentParser(description="Update pip constraints file")
     parser.add_argument(
+        "-p",
         "--python-version",
         default=_get_python_version(),
-        help="Python version to use",
+        help="Python version to use. E.g. 3.9, 3.10, 3.11, etc.",
         type=str,
     )
     args = parser.parse_args(argv)
