@@ -77,7 +77,9 @@ repos:
     rev: 2.7.3
     hooks:
       - id: editorconfig-checker
-        exclude: >
+        name: editorconfig
+        alias: ec
+        exclude: >-
           (?x)^(
             .*\.py
           )$
