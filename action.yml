@@ -40,8 +40,8 @@ runs:
     - run: update-pip-constraints --color
       shell: bash
 
-    - name: Show diff
-      run: git diff --unified=0
+    - name: Show git diff
+      run: git diff --color --unified=0
       shell: bash
 
     - uses: actions/upload-artifact@v4
