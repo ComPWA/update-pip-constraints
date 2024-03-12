@@ -39,6 +39,11 @@ runs:
 
     - run: update-pip-constraints --color
       shell: bash
+
+    - name: Show diff
+      run: git diff --unified=0
+      shell: bash
+
     - uses: actions/upload-artifact@v4
       with:
         name: pip-constraints-${{ inputs.python-version }}
