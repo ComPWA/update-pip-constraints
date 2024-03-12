@@ -24,6 +24,12 @@ import toml
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = ArgumentParser(description="Update pip constraints file")
     parser.add_argument(
+        "--color",
+        action="store_true",
+        default=False,
+        help="Force output to be colorized or not, instead of auto-detecting color support",
+    )
+    parser.add_argument(
         "-p",
         "--python-version",
         default=_get_python_version(),
@@ -40,10 +46,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "setuptools",
             *_get_main_packages(),
         ]
-        exit_code = update_constraints_file_py36(output_file, excludes)
+        exit_code = update_constraints_file_py36(output_file, excludes, args.color)
     else:
         excludes = ["setuptools"]
-        exit_code = update_constraints_file(output_file, python_version, excludes)
+        exit_code = update_constraints_file(
+            output_file, python_version, excludes, args.color
+        )
     if exit_code != 0:
         msg = "There were issues running pip-compile"
         raise RuntimeError(msg)
@@ -108,7 +116,7 @@ def _form_constraint_file_path(python_version: str) -> Path:
 
 
 def update_constraints_file(
-    output_file: Path, python_version: str, unsafe_packages: List[str]
+    output_file: Path, python_version: str, unsafe_packages: List[str], use_color: bool
 ) -> int:
     import subprocess  # noqa: PLC0415, S404
 
@@ -116,6 +124,7 @@ def update_constraints_file(
         msg = "Package has to be configured with pyproject.toml"
         raise ValueError(msg)
     output_file.parent.mkdir(exist_ok=True)
+    color_args = ["--color=always"] if use_color else []
     command_arguments = [
         "uv",
         "pip",
@@ -124,6 +133,7 @@ def update_constraints_file(
         "-o",
         str(output_file),
         "--all-extras",
+        *color_args,
         "--no-annotate",
         f"--python-version={python_version}",
         "--upgrade",
@@ -134,7 +144,9 @@ def update_constraints_file(
     return subprocess.check_call(command_arguments)  # noqa: S603
 
 
-def update_constraints_file_py36(output_file: Path, unsafe_packages: List[str]) -> int:
+def update_constraints_file_py36(
+    output_file: Path, unsafe_packages: List[str], use_color: bool
+) -> int:
     from piptools.scripts import compile  # type: ignore[import]  # noqa: PLC0415
 
     if sys.version_info < (3, 8):
@@ -144,11 +156,13 @@ def update_constraints_file_py36(output_file: Path, unsafe_packages: List[str]) 
 
     print("Resolving dependencies with pip-tools...")  # noqa: T201
     output_file.parent.mkdir(exist_ok=True)
+    color_args = ["--color"] if use_color else []
     command_arguments = [
         "-o",
         output_file,
         "--extra",
         "dev",
+        *color_args,
         "--no-annotate",
         "--strip-extras",
         "--upgrade",
