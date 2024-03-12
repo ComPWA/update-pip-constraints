@@ -37,7 +37,7 @@ runs:
         uv pip install --system update-pip-constraints@git+https://github.com/ComPWA/update-pip-constraints@v1
       shell: bash
 
-    - run: update-pip-constraints
+    - run: update-pip-constraints --color
       shell: bash
     - uses: actions/upload-artifact@v4
       with:
