@@ -28,7 +28,7 @@ def test_update_constraints_file_py36():
     this_directory = Path(__file__).parent.absolute()
     output_file = this_directory / "constraints.txt"
     with pytest.raises(SystemExit) as error:
-        update_constraints_file_py36(output_file, unsafe_packages=[], use_color=True)
+        update_constraints_file_py36(output_file, unsafe_packages=[])
     assert error.type is SystemExit
     assert error.value.code == 0
     with open(output_file) as stream:
