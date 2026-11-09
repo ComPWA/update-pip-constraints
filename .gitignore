@@ -29,6 +29,7 @@ htmlcov/
 prof/
 
 # Virtual environments
+.constraints/
 *venv/
 pyvenv*/
 uv.lock

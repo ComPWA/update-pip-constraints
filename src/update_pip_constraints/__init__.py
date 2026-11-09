@@ -6,11 +6,15 @@ and `uv pip compile <https://docs.astral.sh/uv/pip/compile>`_.
 
 from __future__ import annotations
 
+import re
 import subprocess  # ruff: ignore[suspicious-subprocess-import]
 import sys
 from argparse import ArgumentParser
+from configparser import ConfigParser
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+from packaging.specifiers import SpecifierSet
 
 if sys.version_info >= (3, 11):
     import tomllib
@@ -23,22 +27,73 @@ if TYPE_CHECKING:
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = ArgumentParser(description="Update pip constraints file")
-    parser.add_argument(
+    versions = parser.add_mutually_exclusive_group()
+    versions.add_argument(
         "-p",
         "--python-version",
         default=_get_python_version(),
         help="Python version to use. E.g. 3.9, 3.10, 3.11, etc.",
         type=str,
     )
+    versions.add_argument(
+        "--all",
+        action="store_true",
+        help="Update the constraint files for all Python versions that the package supports.",
+    )
     args = parser.parse_args(argv)
-    python_version = args.python_version
-    output_file = _form_constraint_file_path(python_version)
-    return update_constraints_file(output_file, python_version, ["setuptools"])
+    python_versions = (
+        _get_supported_python_versions() if args.all else [args.python_version]
+    )
+    exit_code = 0
+    for python_version in python_versions:
+        output_file = _form_constraint_file_path(python_version)
+        exit_code |= update_constraints_file(
+            output_file, python_version, ["setuptools"]
+        )
+    return exit_code
 
 
 def _get_python_version() -> str:
     v = sys.version_info
     return f"{v.major}.{v.minor}"
+
+
+def _get_supported_python_versions() -> list[str]:
+    """Determine the supported Python versions from the package metadata.
+
+    The versions are taken from the ``Programming Language :: Python :: 3.X``
+    classifiers or, if there are none, from the minimal Python version.
+    """
+    classifiers, requires_python = _get_python_metadata()
+    prefix = "Programming Language :: Python :: "
+    versions = [
+        c[len(prefix) :]
+        for c in classifiers
+        if re.fullmatch(rf"{re.escape(prefix)}3\.\d+", c)
+    ]
+    if not versions and requires_python:
+        specifier = SpecifierSet(requires_python)
+        versions = [f"3.{minor}" for minor in range(6, 16) if f"3.{minor}" in specifier]
+    if not versions:
+        msg = "Could not determine the supported Python versions from the package metadata"
+        raise ValueError(msg)
+    return sorted(set(versions), key=lambda v: int(v.split(".")[1]))
+
+
+def _get_python_metadata() -> tuple[list[str], str]:
+    pyproject = Path("pyproject.toml")
+    if pyproject.exists():
+        with pyproject.open("rb") as f:
+            project = tomllib.load(f).get("project")
+        if project is not None:
+            return project.get("classifiers", []), project.get("requires-python", "")
+    if Path("setup.cfg").exists():
+        cfg = ConfigParser()
+        cfg.read("setup.cfg")
+        classifiers = cfg.get("metadata", "classifiers", fallback="").split("\n")
+        requires_python = cfg.get("options", "python_requires", fallback="")
+        return [c.strip() for c in classifiers if c.strip()], requires_python.strip()
+    return [], ""
 
 
 def _form_constraint_file_path(python_version: str) -> Path:

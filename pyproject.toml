@@ -21,6 +21,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
+    "packaging",
     "tomli; python_version <'3.11'",
     "uv",
 ]

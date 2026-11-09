@@ -1,13 +1,17 @@
 import os
 import re
 from pathlib import Path
+from textwrap import dedent
 
 import pytest
 
+import update_pip_constraints
 from update_pip_constraints import (
     _find_setup_file,  # pyright: ignore[reportPrivateUsage]
     _form_constraint_file_path,  # pyright: ignore[reportPrivateUsage]
     _get_python_version,  # pyright: ignore[reportPrivateUsage]
+    _get_supported_python_versions,  # pyright: ignore[reportPrivateUsage]
+    main,
     update_constraints_file,
 )
 
@@ -60,6 +64,63 @@ def test_find_setup_file_missing(tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     monkeypatch.chdir(tmp_path)
     with pytest.raises(FileNotFoundError):
         _find_setup_file()
+
+
+@pytest.mark.parametrize(
+    ("files", "expected"),
+    [
+        pytest.param(
+            {
+                "pyproject.toml": """
+                [project]
+                name = "x"
+                requires-python = ">=3.9"
+                classifiers = [
+                    "Programming Language :: Python :: 3",
+                    "Programming Language :: Python :: 3.11",
+                    "Programming Language :: Python :: 3.10",
+                ]
+                """
+            },
+            ["3.10", "3.11"],
+            id="pyproject-classifiers",
+        ),
+        pytest.param(
+            {"pyproject.toml": '[project]\nname = "x"\nrequires-python = ">=3.13"\n'},
+            ["3.13", "3.14", "3.15"],
+            id="pyproject-requires-python",
+        ),
+        pytest.param(
+            {"setup.cfg": SETUP_CFG}, [f"3.{m}" for m in range(6, 16)], id="setup-cfg"
+        ),
+    ],
+)
+def test_get_supported_python_versions(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    files: dict[str, str],
+    expected: list[str],
+):
+    monkeypatch.chdir(tmp_path)
+    for name, content in files.items():
+        (tmp_path / name).write_text(dedent(content))
+    assert _get_supported_python_versions() == expected
+
+
+def test_main_all(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname = "x"\nrequires-python = ">=3.14"\n'
+    )
+    calls: list[str] = []
+
+    def fake_update(output_file: Path, python_version: str, _: list[str]) -> int:
+        calls.append(f"{python_version}:{output_file}")
+        return 0
+
+    monkeypatch.setattr(update_pip_constraints, "update_constraints_file", fake_update)
+    assert main(["--all"]) == 0
+    assert calls == ["3.14:.constraints/py3.14.txt", "3.15:.constraints/py3.15.txt"]
 
 
 @pytest.mark.slow

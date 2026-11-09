@@ -51,6 +51,14 @@ uvx --from git+https://github.com/ComPWA/update-pip-constraints@main update-pip-
 
 This creates or updates the constraint file `.constraints/py3.12.txt`. Without `--python-version`, the constraint file is created for the Python version that runs the command.
 
+To update the constraint files for all Python versions that your package supports, run:
+
+```shell
+uvx --from git+https://github.com/ComPWA/update-pip-constraints@main update-pip-constraints --all
+```
+
+The supported versions are taken from the `Programming Language :: Python :: 3.X` classifiers or, if there are none, from `requires-python` (`python_requires` in `setup.cfg`).
+
 ### GitHub Action
 
 Here are two examples of how to use `update-pip-constraints` as a
