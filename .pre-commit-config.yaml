@@ -2,13 +2,12 @@ ci:
   autoupdate_commit_msg: "MAINT: upgrade lock files"
   autoupdate_schedule: quarterly
   skip:
-    - mypy
-    - pyright
     - tombi-format
     - tombi-lint
-    - uv-lock
+    - ty
   autofix_commit_msg: "MAINT: implement pre-commit autofixes"
 
+  autofix_prs: false
 repos:
   - repo: meta
     hooks:
@@ -78,31 +77,8 @@ repos:
             .*\.py
           )$
 
-  - repo: https://github.com/ComPWA/mirrors-markdown-link-check
-    rev: v3.9.1
+  - repo: https://github.com/astral-sh/ty-pre-commit
+    rev: v0.0.100
     hooks:
-      - id: markdown-link-check
-        exclude: >
-          (?x)^(
-            \.github/release-drafter\.yml|
-            action.yml
-          )$
-
-  - repo: local
-    hooks:
-      - id: mypy
-        name: mypy
-        entry: mypy
-        language: system
-        require_serial: true
-        types: [python]
-
-  - repo: https://github.com/ComPWA/pyright-pre-commit
-    rev: v1.1.414
-    hooks:
-      - id: pyright
-
-  - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.13.7
-    hooks:
-      - id: uv-lock
+      - id: ty
+        args: [--group=types, --no-default-groups]

@@ -32,14 +32,10 @@
   "git.rebaseWhenSync": true,
   "github-actions.workflows.pinned.workflows": [".github/workflows/ci.yml"],
   "gitlens.telemetry.enabled": false,
-  "mypy-type-checker.args": ["--config-file=${workspaceFolder}/pyproject.toml"],
-  "mypy-type-checker.importStrategy": "fromEnvironment",
   "notebook.codeActionsOnSave": {
     "notebook.source.organizeImports": "explicit"
   },
   "notebook.formatOnSave.enabled": true,
-  "python.analysis.autoImportCompletions": false,
-  "python.analysis.inlayHints.pytestParameters": true,
   "python.defaultInterpreterPath": ".venv/bin/python",
   "python.terminal.activateEnvironment": false,
   "python.testing.pytestArgs": ["-vv"],
@@ -55,5 +51,8 @@
   },
   "telemetry.telemetryLevel": "off",
   "testing.coverageToolbarEnabled": true,
-  "testing.showCoverageInExplorer": true
+  "testing.showCoverageInExplorer": true,
+  "ty.completions.autoImport": false,
+  "ty.diagnosticMode": "workspace",
+  "ty.importStrategy": "fromEnvironment"
 }

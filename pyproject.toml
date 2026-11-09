@@ -40,11 +40,11 @@ update-pip-constraints = "update_pip_constraints:main"
 [dependency-groups]
 dev = [
     "ruff",
+    "ty",
     { include-group = "style" },
     { include-group = "test" },
 ]
 style = [
-    "mypy",
     { include-group = "types" },
 ]
 test = [
@@ -53,6 +53,7 @@ test = [
 ]
 types = [
     "pytest",
+    "tomli",  # resolve the import fallback for Python <3.11
 ]
 
 [build-system]
@@ -68,11 +69,12 @@ pytest-single-threaded = true
 repo-name = "update-pip-constraints"
 
 [tool.compwa.policy.github]
+autofix-ci = true
 no-pypi = true
 no-version-branches = true
 
 [tool.compwa.policy.python]
-type-checker = ["mypy", "pyright"]
+type-checker = ["ty"]
 
 [tool.coverage.run]
 branch = true
@@ -93,20 +95,24 @@ fail_under = 75
 docstring-trailing-line = false
 format-python-code-blocks = false
 
-[tool.mypy]
-disallow_incomplete_defs = true
-disallow_untyped_defs = true
-files = [
-    "**/*.py",
-    "**/*.pyi",
+[tool.lychee]
+cache = true
+cache_exclude_status = "400.."
+# [:] keeps Lychee from extracting regex patterns as URLs.
+exclude = [
+    "%7B[^/]*%7D",  # URL templates are completed at build or runtime
+    "^https[:]//x-access-token/$",  # Token-authenticated Git remote placeholder
+    '\$(?:NEXT_[A-Z_]+|PREVIOUS_TAG)',  # Release Drafter substitutes these placeholders at runtime
 ]
-warn_unused_configs = true
-
-[[tool.mypy.overrides]]
-check_untyped_defs = true
-disallow_incomplete_defs = false
-disallow_untyped_defs = false
-module = ["tests.*"]
+extensions = ["json", "md", "py", "toml", "yaml", "yml"]
+hidden = true  # Include the workflows under .github/
+include_fragments = "anchor-only"
+include_verbatim = true
+max_cache_age = "7d"
+remap = [
+    '^git\+(https[:]//[^@]+)(@.*)?$ $1',
+    '^(https[:]//github\.com/ComPWA/update-pip-constraints/compare)/\$PREVIOUS_TAG.*$ $1',
+]
 
 [tool.poe.executor]
 isolated = true
@@ -185,10 +191,15 @@ ref = "test"
 env = { UV_PYTHON = "3.15" }
 ref = "test"
 
+[tool.poe.groups.doc.tasks.linkcheck]
+cmd = "uvx --from lychee-bin lychee . --quiet"
+executor = { type = "simple" }
+help = "Check links and fragments in repository sources (requires internet connection)"
+
 [tool.poe.tasks.all]
 help = "Run all continuous integration (CI) tasks locally"
 ignore_fail = "return_non_zero"
-sequence = ["style", "cov", "test-all"]
+sequence = ["style", "linkcheck", "cov", "test-all"]
 
 [tool.poe.tasks.style]
 cmd = "prek run --all-files"
@@ -210,24 +221,6 @@ executor = { type = "simple" }
 [tool.poe.tasks._upgrade-uv]
 cmd = "uv lock --upgrade"
 executor = { type = "simple" }
-
-[tool.pyright]
-include = [
-    "src",
-    "tests",
-]
-reportGeneralTypeIssues = false
-reportPrivateImportUsage = false
-reportUnboundVariable = false
-reportUnknownMemberType = false
-reportUnknownVariableType = false
-reportUnusedClass = true
-reportUnusedFunction = true
-reportUnusedImport = true
-reportUnusedVariable = true
-typeCheckingMode = "strict"
-venv = ".venv"
-venvPath = "."
 
 [tool.pytest]
 addopts = [
@@ -331,9 +324,6 @@ where = ["src"]
 
 [tool.setuptools_scm]
 
-[tool.tombi.files]
-exclude = ["**/uv.lock"]
-
 [tool.tombi.format.rules]
 indent-width = 4
 line-width = 88
@@ -345,3 +335,11 @@ key-empty = "off"
 root = "tool.compwa.policy"
 path = "https://raw.githubusercontent.com/ComPWA/policy/0.10.5/compwa-policy.schema.json"
 include = ["pyproject.toml"]
+
+[tool.ty.rules]
+division-by-zero = "warn"
+possibly-missing-import = "warn"
+possibly-unresolved-reference = "warn"
+
+[tool.ty.terminal]
+error-on-warning = true

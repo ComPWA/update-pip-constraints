@@ -23,7 +23,6 @@ dist/
 .coverage
 .coverage.*
 .ipynb_checkpoints/
-.mypy*/
 .pytest_cache/
 __pycache__/
 htmlcov/
@@ -32,6 +31,7 @@ prof/
 # Virtual environments
 *venv/
 pyvenv*/
+uv.lock
 
 # Settings
 .idea/
@@ -42,11 +42,10 @@ pyvenv*/
 !.github/*.yml
 !.github/*/*.yml
 !.gitpod.yml
-!.markdown-link-check.json
 !.pre-commit-config.yaml
 !.readthedocs.yml
 !.vscode/*.json
 !.zenodo.json
 !action.yml
 !codecov.yml
-!pyrightconfig.json
+.lycheecache
