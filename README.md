@@ -1,20 +1,14 @@
 # Update pip constraint files
 
+[![Spelling checked](https://img.shields.io/badge/cspell-checked-brightgreen.svg)](https://github.com/streetsidesoftware/cspell/tree/main/packages/cspell)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Type-checked with mypy](https://mypy-lang.org/static/mypy_badge.svg)](https://mypy.readthedocs.io)
 [![BSD 3-Clause license](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![GitPod](https://img.shields.io/badge/gitpod-open-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ComPWA/update-pip-constraints)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ComPWA/update-pip-constraints/main.svg)](https://results.pre-commit.ci/latest/github/ComPWA/update-pip-constraints/main)
-[![Spelling checked](https://img.shields.io/badge/cspell-checked-brightgreen.svg)](https://github.com/streetsidesoftware/cspell/tree/master/packages/cspell)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-This Python package is a wrapper around
-[`pip-tools`](https://github.com/jazzband/pip-tools). It helps updating a
-collection of
-[PyPI constraints files](https://pip.pypa.io/en/stable/user_guide/#constraints-files)
-for your repository. One constraint file is created for each Python version
-that your package supports (see
-[here](https://github.com/jazzband/pip-tools#cross-environment-usage-of-requirementsinrequirementstxt-and-pip-compile)
-why this is important). The file structure is as follows:
+This Python package is a wrapper around [`uv pip compile`](https://docs.astral.sh/uv/pip/compile). It helps updating a collection of [PyPI constraints files](https://pip.pypa.io/en/stable/user_guide/#constraints-files) for your repository. One constraint file is created for each Python version that your package supports (see [here](https://github.com/jazzband/pip-tools#cross-environment-usage-of-requirementsinrequirementstxt-and-pip-compile) why this is important). The package can be configured with `pyproject.toml`, `setup.cfg`, or `setup.py`, and constraints can be generated for any Python version that uv can resolve for, including Python 3.6. The file structure is as follows:
 
 ```text
 .constraints/
@@ -49,21 +43,13 @@ defined under an `extras_require` section called `[dev]`.
 
 ### Python package
 
-This Package can be installed with [`pip`](https://pypi.org/project/pip) from
-GitHub:
+Run the command with [`uvx`](https://docs.astral.sh/uv/guides/tools) from the root of your repository:
 
 ```shell
-python3 -m pip install git+https://github.com/ComPWA/update-pip-constraints@main
+uvx --from git+https://github.com/ComPWA/update-pip-constraints@main update-pip-constraints --python-version 3.12
 ```
 
-Now, if you run the command:
-
-```shell
-update-pip-constraints
-```
-
-an updated constraint file will be created for your version of Python under
-`.constraints/py3.x.txt`.
+This creates or updates the constraint file `.constraints/py3.12.txt`. Without `--python-version`, the constraint file is created for the Python version that runs the command.
 
 ### GitHub Action
 

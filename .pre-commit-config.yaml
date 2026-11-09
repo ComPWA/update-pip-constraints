@@ -1,11 +1,13 @@
 ci:
-  autoupdate_commit_msg: "MAINT: autoupdate pre-commit hooks"
-  autoupdate_schedule: monthly
+  autoupdate_commit_msg: "MAINT: upgrade lock files"
+  autoupdate_schedule: quarterly
   skip:
     - mypy
-    - prettier
     - pyright
-    - taplo
+    - tombi-format
+    - tombi-lint
+    - uv-lock
+  autofix_commit_msg: "MAINT: implement pre-commit autofixes"
 
 repos:
   - repo: meta
@@ -14,27 +16,19 @@ repos:
       - id: check-useless-excludes
 
   - repo: https://github.com/ComPWA/policy
-    rev: 0.2.6
+    rev: 0.10.5
     hooks:
       - id: check-dev-files
-        args:
-          - --no-notebooks
-          - --no-prettierrc
-          - --no-pypi
-          - --no-version-branches
-          - --pytest-single-threaded
-          - --repo-name=update-pip-constraints
-      - id: format-setup-cfg
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.0
+    rev: v0.17.4
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: [--fix]
       - id: ruff-format
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: check-ast
       - id: check-case-conflict
@@ -51,30 +45,30 @@ repos:
         args: ["--django"]
       - id: trailing-whitespace
 
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
+  - repo: https://github.com/tombi-toml/tombi-pre-commit
+    rev: v1.11.1
+    hooks:
+      - id: tombi-format
+      - id: tombi-lint
+        args: [--error-on-warnings]
+
+  - repo: https://github.com/ComPWA/prettier-pre-commit
+    rev: v3.9.10
     hooks:
       - id: prettier
 
-  - repo: https://github.com/ComPWA/mirrors-taplo
-    rev: v0.8.1
-    hooks:
-      - id: taplo
-
-  - repo: https://github.com/pappasam/toml-sort
-    rev: v0.23.1
-    hooks:
-      - id: toml-sort
-        args:
-          - --in-place
-
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v8.5.0
+    rev: v10.4.0
     hooks:
       - id: cspell
 
+  - repo: https://github.com/LilSpazJoekp/docstrfmt
+    rev: v2.2.1
+    hooks:
+      - id: docstrfmt
+
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 2.7.3
+    rev: 3.11.1
     hooks:
       - id: editorconfig-checker
         name: editorconfig
@@ -100,10 +94,15 @@ repos:
         name: mypy
         entry: mypy
         language: system
-        types:
-          - python
+        require_serial: true
+        types: [python]
 
-  - repo: https://github.com/ComPWA/mirrors-pyright
-    rev: v1.1.352
+  - repo: https://github.com/ComPWA/pyright-pre-commit
+    rev: v1.1.414
     hooks:
       - id: pyright
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.13.7
+    hooks:
+      - id: uv-lock

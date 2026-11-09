@@ -4,12 +4,9 @@
     "rewrap.wrappingColumn": 72
   },
   "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.wordWrap": "on"
   },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[markdown]": {
+  "[json][jsonc][markdown][yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[python]": {
@@ -20,13 +17,9 @@
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.rulers": [88]
   },
-  "[yaml]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "[toml]": {
+    "editor.defaultFormatter": "tombi-toml.tombi"
   },
-  "coverage-gutters.coverageFileNames": ["coverage.xml"],
-  "coverage-gutters.coverageReportFileName": "**/htmlcov/index.html",
-  "coverage-gutters.showGutterCoverage": false,
-  "coverage-gutters.showLineCoverage": true,
   "cSpell.enabled": true,
   "diffEditor.experimental.showMoves": true,
   "editor.formatOnSave": true,
@@ -39,16 +32,17 @@
   "git.rebaseWhenSync": true,
   "github-actions.workflows.pinned.workflows": [".github/workflows/ci.yml"],
   "gitlens.telemetry.enabled": false,
-  "multiDiffEditor.experimental.enabled": true,
   "mypy-type-checker.args": ["--config-file=${workspaceFolder}/pyproject.toml"],
   "mypy-type-checker.importStrategy": "fromEnvironment",
   "notebook.codeActionsOnSave": {
     "notebook.source.organizeImports": "explicit"
   },
   "notebook.formatOnSave.enabled": true,
+  "python.analysis.autoImportCompletions": false,
   "python.analysis.inlayHints.pytestParameters": true,
-  "python.analysis.typeCheckingMode": "strict",
-  "python.testing.pytestArgs": ["--color=no", "--no-cov", "-vv"],
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  "python.terminal.activateEnvironment": false,
+  "python.testing.pytestArgs": ["-vv"],
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
   "redhat.telemetry.enabled": false,
@@ -57,8 +51,9 @@
   "ruff.importStrategy": "fromEnvironment",
   "ruff.organizeImports": true,
   "search.exclude": {
-    "**/tests/**/__init__.py": true,
-    ".constraints/*.txt": true
+    "**/tests/**/__init__.py": true
   },
-  "telemetry.telemetryLevel": "off"
+  "telemetry.telemetryLevel": "off",
+  "testing.coverageToolbarEnabled": true,
+  "testing.showCoverageInExplorer": true
 }

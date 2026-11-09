@@ -7,18 +7,19 @@
     "esbenp.prettier-vscode",
     "github.vscode-github-actions",
     "github.vscode-pull-request-github",
+    "mhutchie.git-graph",
     "ms-python.mypy-type-checker",
     "ms-python.python",
     "ms-python.vscode-pylance",
     "redhat.vscode-yaml",
-    "ryanluker.vscode-coverage-gutters",
     "soulcode.vscode-unwanted-extensions",
     "stkb.rewrap",
     "streetsidesoftware.code-spell-checker",
-    "tamasfe.even-better-toml",
+    "tombi-toml.tombi",
     "yzhang.markdown-all-in-one"
   ],
   "unwantedRecommendations": [
+    "astral-sh.ty",
     "bungcip.better-toml",
     "davidanson.vscode-markdownlint",
     "dbaeumer.vscode-eslint",
@@ -27,6 +28,8 @@
     "ms-python.flake8",
     "ms-python.isort",
     "ms-python.pylint",
+    "ryanluker.vscode-coverage-gutters",
+    "tamasfe.even-better-toml",
     "travisillig.vscode-json-stable-stringify",
     "tyriar.sort-lines"
   ]

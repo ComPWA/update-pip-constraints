@@ -17,11 +17,9 @@
 .eggs/
 .fuse_*
 dist/
-version.py
 
 # Temporary files
 *.pyc
-*condaenv.*
 .coverage
 .coverage.*
 .ipynb_checkpoints/
@@ -33,7 +31,6 @@ prof/
 
 # Virtual environments
 *venv/
-.tox/
 pyvenv*/
 
 # Settings
@@ -52,5 +49,4 @@ pyvenv*/
 !.zenodo.json
 !action.yml
 !codecov.yml
-!environment.yml
 !pyrightconfig.json

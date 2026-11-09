@@ -3,18 +3,14 @@
   "ignorePaths": [
     "**/.cspell.json",
     ".editorconfig",
+    ".envrc",
+    ".github/dependabot.yml",
     ".gitignore",
-    ".gitpod.*",
     ".pre-commit-config.yaml",
     ".prettierignore",
     ".vscode/*",
-    "pyproject.toml",
-    "setup.cfg",
-    "setup.py",
-    "tox.ini"
+    "pyproject.toml"
   ],
-  "dictionaryDefinitions": [],
-  "dictionaries": [],
   "words": [
     "Conda",
     "isort",
@@ -56,5 +52,6 @@
     "transision",
     "transisions"
   ],
-  "language": "en-US"
+  "language": "en-US",
+  "useGitignore": true
 }
