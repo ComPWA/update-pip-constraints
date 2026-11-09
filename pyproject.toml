@@ -4,7 +4,7 @@ description = "Update PyPI constraint files for your package"
 requires-python = ">=3.10"
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
-authors = [{ name = "Common Partial Wave Analysis", email = "compwa-admin@ep1.rub.de" }]
+authors = [{ name = "Common Partial Wave Analysis" }]
 maintainers = [{ email = "compwa-admin@ep1.rub.de" }]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -32,6 +32,8 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.urls]
+Changelog = "https://github.com/ComPWA/update-pip-constraints/releases"
+Documentation = "https://github.com/ComPWA/update-pip-constraints/blob/main/README.md"
 Issues = "https://github.com/ComPWA/update-pip-constraints/issues"
 Source = "https://github.com/ComPWA/update-pip-constraints"
 
