@@ -104,9 +104,7 @@ cache = true
 cache_exclude_status = "400.."
 # [:] keeps Lychee from extracting regex patterns as URLs.
 exclude = [
-    "%7B[^/]*%7D",  # URL templates are completed at build or runtime
     "^https[:]//x-access-token/$",  # Token-authenticated Git remote placeholder
-    '\$(?:NEXT_[A-Z_]+|PREVIOUS_TAG)',  # Release Drafter substitutes these placeholders at runtime
 ]
 extensions = ["json", "md", "py", "toml", "yaml", "yml"]
 hidden = true  # Include the workflows under .github/
