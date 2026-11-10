@@ -73,6 +73,7 @@ repo-name = "update-pip-constraints"
 
 [tool.compwa.policy.github]
 autofix-ci = true
+dependabot-assignees = ["redeboer"]
 no-pypi = true
 no-version-branches = true
 
