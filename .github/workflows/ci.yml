@@ -20,9 +20,9 @@ on:
 
 jobs:
   style:
-    uses: ComPWA/actions/.github/workflows/style.yml@a024afbb9e182bea4924a73fc60ae59462849ebb # v4.2.0
+    uses: ComPWA/actions/.github/workflows/style.yml@eadda724984c78a55a6acb4dcdbb2167fb5eba03 # v4.2.1
   test:
-    uses: ComPWA/actions/.github/workflows/test.yml@a024afbb9e182bea4924a73fc60ae59462849ebb # v4.2.0
+    uses: ComPWA/actions/.github/workflows/test.yml@eadda724984c78a55a6acb4dcdbb2167fb5eba03 # v4.2.1
     with:
       macos-python-version: "3.11"
       multithreaded: false
