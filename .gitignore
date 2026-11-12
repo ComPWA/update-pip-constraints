@@ -17,40 +17,45 @@
 .eggs/
 .fuse_*
 dist/
-version.py
 
 # Temporary files
 *.pyc
-*condaenv.*
 .coverage
 .coverage.*
 .ipynb_checkpoints/
-.mypy*/
 .pytest_cache/
 __pycache__/
 htmlcov/
 prof/
 
 # Virtual environments
+.constraints/
 *venv/
-.tox/
 pyvenv*/
+uv.lock
 
 # Settings
 .idea/
 **.code-workspace
+
+# Agent tooling
+.agents/
+.claude/
+.codex/
+.gemini/
+AGENTS.md
+CLAUDE.md
+GEMINI.md
 
 # Exceptions
 !.cspell.json
 !.github/*.yml
 !.github/*/*.yml
 !.gitpod.yml
-!.markdown-link-check.json
 !.pre-commit-config.yaml
 !.readthedocs.yml
 !.vscode/*.json
 !.zenodo.json
 !action.yml
 !codecov.yml
-!environment.yml
-!pyrightconfig.json
+.lycheecache

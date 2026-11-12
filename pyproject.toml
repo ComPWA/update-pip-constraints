@@ -1,67 +1,249 @@
-[build-system]
-requires = [
-    "setuptools>=36.2.1", # environment markers
-    "setuptools_scm",
-    "wheel",
+[project]
+name = "update-pip-constraints"
+description = "Update PyPI constraint files for your package"
+requires-python = ">=3.10"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+authors = [{ name = "Common Partial Wave Analysis" }]
+maintainers = [{ email = "compwa-admin@ep1.rub.de" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Typing :: Typed",
+]
+dependencies = [
+    "packaging",
+    "tomli; python_version <'3.11'",
+    "uv",
+]
+dynamic = ["version"]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.urls]
+Changelog = "https://github.com/ComPWA/update-pip-constraints/releases"
+Documentation = "https://github.com/ComPWA/update-pip-constraints/blob/main/README.md"
+Issues = "https://github.com/ComPWA/update-pip-constraints/issues"
+Source = "https://github.com/ComPWA/update-pip-constraints"
+
+[project.scripts]
+update-pip-constraints = "update_pip_constraints:main"
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "ty",
+    { include-group = "style" },
+    { include-group = "test" },
+]
+style = [
+    { include-group = "types" },
+]
+test = [
+    "pytest",
+    "pytest-cov",
+]
+types = [
+    "pytest",
+    "tomli",  # resolve the import fallback for Python <3.11
 ]
 
-[tool.setuptools_scm]
-write_to = "src/update_pip_constraints/version.py"
+[build-system]
+requires = [
+    "setuptools>=77",
+    "setuptools_scm",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.compwa.policy]
+package-manager = "uv"
+pytest-single-threaded = true
+repo-name = "update-pip-constraints"
+
+[tool.compwa.policy.github]
+autofix-ci = true
+dependabot-assignees = ["redeboer"]
+no-pypi = true
+no-version-branches = true
+
+[tool.compwa.policy.python]
+type-checker = ["ty"]
 
 [tool.coverage.run]
 branch = true
 source = ["src"]
-
-[tool.mypy]
-disallow_incomplete_defs = true
-disallow_untyped_defs = true
-files = [
-    "**/*.py",
-    "**/*.pyi",
+omit = [
+    "benchmarks/**/*.py",
+    "docs/**/*.ipynb",
+    "docs/**/*.py",
+    "examples/**/*.py",
+    "tests/**/*.py",
 ]
-show_error_codes = true
-warn_unused_configs = true
 
-[[tool.mypy.overrides]]
-check_untyped_defs = true
-disallow_incomplete_defs = false
-disallow_untyped_defs = false
-module = ["tests.*"]
+[tool.coverage.report]
+exclude_also = ["if TYPE_CHECKING:"]
+fail_under = 75
 
-[tool.pyright]
-include = [
-    "src",
-    "tests",
+[tool.docstrfmt]
+docstring-trailing-line = false
+format-python-code-blocks = false
+
+[tool.lychee]
+cache = true
+cache_exclude_status = "400.."
+# [:] keeps Lychee from extracting regex patterns as URLs.
+exclude = [
+    "^https[:]//x-access-token/$",  # Token-authenticated Git remote placeholder
 ]
-reportGeneralTypeIssues = false
-reportPrivateImportUsage = false
-reportUnboundVariable = false
-reportUnknownMemberType = false
-reportUnknownVariableType = false
-reportUnusedClass = true
-reportUnusedFunction = true
-reportUnusedImport = true
-reportUnusedVariable = true
-typeCheckingMode = "strict"
+extensions = ["json", "md", "py", "toml", "yaml", "yml"]
+hidden = true  # Include the workflows under .github/
+include_fragments = "anchor-only"
+include_verbatim = true
+max_cache_age = "7d"
+remap = [
+    '^git\+(https[:]//[^@]+)(@.*)?$ $1',
+    '^(https[:]//github\.com/ComPWA/update-pip-constraints/compare)/\$PREVIOUS_TAG.*$ $1',
+]
 
-[tool.pytest.ini_options]
+[tool.poe.executor]
+isolated = true
+no-group = "dev"
+type = "uv"
+
+[tool.poe.groups.test]
+heading = "Testing"
+
+[tool.poe.groups.test.tasks.cov]
+cmd = """
+pytest \
+    --cov=update_pip_constraints \
+    --cov-report=html \
+    --cov-report=xml \
+    ${paths}
+"""
+executor = { group = "test" }
+help = "Compute how much of the source code is covered by tests"
+
+[[tool.poe.groups.test.tasks.cov.args]]
+default = "src tests"
+multiple = true
+name = "paths"
+positional = true
+
+[tool.poe.groups.test.tasks.test]
+cmd = "pytest -m 'not slow' ${paths}"
+executor = { group = "test" }
+help = "Run all fast unit tests and doctests"
+
+[[tool.poe.groups.test.tasks.test.args]]
+default = "src tests"
+multiple = true
+name = "paths"
+positional = true
+
+[tool.poe.groups.test.tasks.test-all]
+help = "Run all tests on each supported Python version"
+sequence = [
+    "test-py310 ${paths}",
+    "test-py311 ${paths}",
+    "test-py312 ${paths}",
+    "test-py313 ${paths}",
+    "test-py314 ${paths}",
+    "test-py315 ${paths}",
+]
+
+[[tool.poe.groups.test.tasks.test-all.args]]
+default = ""
+multiple = true
+name = "paths"
+positional = true
+
+[tool.poe.groups.test.tasks.test-py310]
+env = { UV_PYTHON = "3.10" }
+ref = "test"
+
+[tool.poe.groups.test.tasks.test-py311]
+env = { UV_PYTHON = "3.11" }
+ref = "test"
+
+[tool.poe.groups.test.tasks.test-py312]
+env = { UV_PYTHON = "3.12" }
+ref = "test"
+
+[tool.poe.groups.test.tasks.test-py313]
+env = { UV_PYTHON = "3.13" }
+ref = "test"
+
+[tool.poe.groups.test.tasks.test-py314]
+env = { UV_PYTHON = "3.14" }
+ref = "test"
+
+[tool.poe.groups.test.tasks.test-py315]
+env = { UV_PYTHON = "3.15" }
+ref = "test"
+
+[tool.poe.groups.doc.tasks.linkcheck]
+cmd = "uvx --from lychee-bin lychee . --quiet"
+executor = { type = "simple" }
+help = "Check links and fragments in repository sources (requires internet connection)"
+
+[tool.poe.tasks.all]
+help = "Run all continuous integration (CI) tasks locally"
+ignore_fail = "return_non_zero"
+sequence = ["style", "linkcheck", "cov", "test-all"]
+
+[tool.poe.tasks.style]
+cmd = "prek run --all-files"
+executor = { group = "style" }
+help = "Perform all linting, formatting, and spelling checks"
+
+[tool.poe.tasks.upgrade]
+executor = { type = "simple" }
+help = "Upgrade lock files"
+parallel = [
+    "_upgrade-precommit",
+    "_upgrade-uv",
+]
+
+[tool.poe.tasks._upgrade-precommit]
+cmd = "prek autoupdate"
+executor = { type = "simple" }
+
+[tool.poe.tasks._upgrade-uv]
+cmd = "uv lock --upgrade"
+executor = { type = "simple" }
+
+[tool.pytest]
 addopts = [
     "--color=yes",
     "--doctest-continue-on-failure",
     "--doctest-modules",
     "--durations=3",
+    "--import-mode=importlib",
 ]
 filterwarnings = [
     "error",
     "ignore:Creating a LegacyVersion has been deprecated.*:DeprecationWarning",
     "ignore:Distutils was imported before Setuptools.*:UserWarning",
+    'ignore:Setuptools is replacing distutils\.:UserWarning',
     "ignore:The distutils package is deprecated.*:DeprecationWarning",
     "ignore:The distutils.sysconfig module is deprecated.*:DeprecationWarning",
     "ignore:pkg_resources is deprecated as an API:DeprecationWarning",
     "ignore:the imp module is deprecated in favour of importlib.*:DeprecationWarning",
-    'ignore:Setuptools is replacing distutils\.:UserWarning',
 ]
 markers = ["slow: marks tests as slow (deselect with '-m \"not slow\"')"]
+minversion = "9.0"
 testpaths = [
     "src",
     "tests",
@@ -74,93 +256,92 @@ src = [
     "src",
     "tests",
 ]
-target-version = "py37"
 
 [tool.ruff.format]
 docstring-code-format = true
 line-ending = "lf"
 
 [tool.ruff.lint]
-extend-select = [
-    "A",
-    "B",
-    "BLE",
-    "C4",
-    "C90",
-    "D",
-    "EM",
-    "ERA",
-    "I",
-    "ICN",
-    "INP",
-    "ISC",
-    "N",
-    "NPY",
-    "PGH",
-    "PIE",
-    "PL",
-    "Q",
-    "RET",
-    "RSE",
-    "RUF",
-    "S",
-    "SIM",
-    "T20",
-    "TCH",
-    "TID",
-    "TRY",
-    "UP",
-    "YTT",
-]
 ignore = [
-    "D101",
-    "D102",
-    "D103",
-    "D105",
-    "D107",
-    "D203",
-    "D213",
-    "D407",
-    "D416",
-    "E501",
-    "ISC001",
-    "PLW1514",
-    "SIM108",
-    "UP036",
+    "DOC",
+    "PTH",
+    "any-type",
+    "if-else-block-instead-of-if-exp",
+    "incorrect-blank-line-before-class",
+    "line-too-long",
+    "logging-f-string",
+    "missing-copyright-notice",
+    "missing-dashed-underline-after-section",
+    "missing-section-name-colon",
+    "missing-trailing-comma",
+    "multi-line-summary-second-line",
+    "non-empty-init-module",
+    "outdated-version-block",
+    "pytest-fixture-incorrect-parentheses-style",
+    "read-whole-file",
+    "reimplemented-starmap",
+    "single-line-implicit-string-concatenation",
+    "undocumented-magic-method",
+    "undocumented-public-class",
+    "undocumented-public-function",
+    "undocumented-public-init",
+    "undocumented-public-method",
+    "unspecified-encoding",
+    "write-whole-file",
 ]
 task-tags = ["cspell"]
+select = ["ALL"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
 
 [tool.ruff.lint.per-file-ignores]
-"setup.py" = ["D100"]
-"src/update_pip_constraints/__init__.py" = ["E402"]
+"setup.py" = ["undocumented-public-module"]
+"src/update_pip_constraints/__init__.py" = ["module-import-not-at-top-of-file"]
 "tests/*" = [
+    "ANN",
     "D",
-    "INP001",
-    "PGH001",
-    "PLC2701",
-    "PLR0913",
-    "PLR2004",
-    "PLR6301",
-    "S101",
     "T20",
+    "assert",
+    "boolean-type-hint-positional-argument",
+    "float-equality-comparison",
+    "implicit-namespace-package",
+    "import-private-name",
+    "magic-value-comparison",
+    "no-self-use",
+    "private-member-access",
+    "too-many-arguments",
 ]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.tomlsort]
-all = false
-ignore_case = true
-in_place = true
-sort_first = [
-    "build-system",
-    "project",
-    "tool.setuptools",
-    "tool.setuptools_scm",
-]
-sort_table_keys = true
-spaces_indent_inline_array = 4
-trailing_comma_inline_array = true
+[tool.setuptools]
+include-package-data = false
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+namespaces = false
+where = ["src"]
+
+[tool.setuptools_scm]
+
+[tool.tombi.format.rules]
+indent-width = 4
+line-width = 88
+
+[tool.tombi.lint.rules]
+key-empty = "off"
+
+[[tool.tombi.schemas]]
+root = "tool.compwa.policy"
+path = "https://raw.githubusercontent.com/ComPWA/policy/0.10.7/compwa-policy.schema.json"
+include = ["pyproject.toml"]
+
+[tool.ty.rules]
+division-by-zero = "warn"
+possibly-missing-import = "warn"
+possibly-unresolved-reference = "warn"
+
+[tool.ty.terminal]
+error-on-warning = true
